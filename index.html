@@ -1,0 +1,64 @@
+<!-- An advanced script by SecondRoblox -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat { width: 100%; height: 400px; overflow-y: scroll; border: 1px solid #ccc; margin-bottom: 10px; }
+        #message { width: 70%; }
+    </style>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCrFCCo4svIGrotZdWdEZQqLj0VkUnUI3I",
+            authDomain: "serversidedstorage.firebaseapp.com",
+            projectId: "serversidedstorage",
+            storageBucket: "serversidedstorage.appspot.com",
+            messagingSenderId: "958060526624",
+            appId: "1:958060526624:web:5bc255b6b20eb05bc25045",
+            measurementId: "G-PJ0JQ2DS4B"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const chatDiv = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('send');
+
+        // Load messages from Firebase
+        const messagesRef = ref(database, 'messages/');
+        onValue(messagesRef, (snapshot) => {
+            chatDiv.innerHTML = '';
+            snapshot.forEach((childSnapshot) => {
+                const message = childSnapshot.val();
+                chatDiv.innerHTML += `<div>${message}</div>`;
+            });
+            chatDiv.scrollTop = chatDiv.scrollHeight; // Scroll to the bottom
+        });
+
+        // Send message to Firebase
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message) {
+                push(messagesRef, message); // Push new message
+                messageInput.value = ''; // Clear input
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Chatroom</h1>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Type a message...">
+    <button id="send">Send</button>
+</body>
+</html>
